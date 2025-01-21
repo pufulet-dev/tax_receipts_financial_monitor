@@ -31,9 +31,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   ];
 
   return (
-    <html lang={locale || 'en'}>
+    <html lang={locale || 'en'} suppressHydrationWarning>
       <body>
-        <Layout>
+        <Layout style={{ display: "grid", minHeight: "100vh", }}>
           <Header style={{ display: 'flex', alignItems: 'center' }}>
             <Link href={`/${locale}`}>
               <Title level={3} style={{ color: 'white', marginRight: '20px' }}>
@@ -45,7 +45,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           <Content style={{ padding: '0 50px', marginTop: '20px' }}>
             {children}
           </Content>
-          <Footer style={{ textAlign: 'center' }}>
+          <Footer style={{ textAlign: 'center', marginTop: "auto", }}>
             ©2025 Financial Monitor
           </Footer>
         </Layout>
