@@ -77,7 +77,6 @@ const ReceiptForm: React.FC = () => {
       >
         <DatePicker 
           style={{ width: '100%' }}
-          prefix={<CalendarOutlined />}
           format="YYYY-MM-DD"
           placeholder="Select date"
         />

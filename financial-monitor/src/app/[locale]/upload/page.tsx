@@ -1,7 +1,7 @@
 "use server";
 import UploadCard from "@/components/UploadCard/UploadCard";
 
-const Upload: React.FC = () => {
+const UploadPage = () => {
 
     
 
@@ -12,4 +12,4 @@ const Upload: React.FC = () => {
     );
 };
 
-export default Upload;
+export default UploadPage;
