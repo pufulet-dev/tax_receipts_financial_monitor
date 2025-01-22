@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import ReceiptForm from '../ReceiptForm/ReceiptForm';
-import { Row, Col, Input, Typography, Button, Card, Space } from 'antd';
+import { Row, Col, Input, Typography, Button, Card, Space, Spin } from 'antd';
 import { LinkOutlined, UploadOutlined, FormOutlined, InboxOutlined } from '@ant-design/icons';
 import { message, Upload } from 'antd';
 import styles from "./UploadCard.module.css";
@@ -13,6 +13,8 @@ const { Dragger } = Upload;
 const UploadCard: React.FC = () => {
 
     const [activeButton, setActiveButton] = useState(0);
+    const [scrapeUrl, setScrapeUrl] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const props = {
         name: 'file',
@@ -52,6 +54,34 @@ const UploadCard: React.FC = () => {
         setActiveButton(index);
     };
 
+    const handleWebScrapping = async () => {
+        console.log("started web scrapping");
+        const url = scrapeUrl;
+
+        setLoading(true);
+
+        try {
+            const response = await fetch('/api/scrape', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ url }),  
+            });
+      
+            if (response.ok) {
+              const data = await response.json();
+              console.log("scrapped data: ", data)
+            } else {
+              console.log("ERROR! fAILE to scrape")
+            }
+            setLoading(false);
+          } catch (err: any) {
+            console.log('Error during scraping: ' + err.message); 
+            setLoading(false);
+          } 
+    };
+
     return (
         <Space direction="vertical" className={styles.cardWrapper}>
             <Card className={styles.card}>
@@ -84,12 +114,17 @@ const UploadCard: React.FC = () => {
                         </Row>
                         <Row gutter={16}>
                             <Col span={18}>
-                                <Input size="small" placeholder="https://" />
+                                <Input 
+                                    size="small" 
+                                    placeholder="https://"
+                                    value={scrapeUrl}
+                                    onChange={(event) => {setScrapeUrl(event?.target?.value || "")}} />
                             </Col>
                             <Col span={6}>
                                 <Button type="primary">Process</Button>
                             </Col>
                         </Row>
+                        {loading === true && <Spin />}
                     </Space.Compact>
                 }
                 {
@@ -120,6 +155,7 @@ const UploadCard: React.FC = () => {
                     </Text>
                 }
 
+                <Button onClick={handleWebScrapping}> Trigger Web Scrapping </Button>
             </Card>
         </Space>
     )
