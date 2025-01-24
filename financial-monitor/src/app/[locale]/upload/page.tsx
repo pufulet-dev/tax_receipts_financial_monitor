@@ -1,9 +1,8 @@
 "use server";
 import UploadCard from "@/components/UploadCard/UploadCard";
 
-const UploadPage = () => {
 
-    
+const UploadPage = () => {
 
     return (
       <>

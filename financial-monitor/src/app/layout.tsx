@@ -4,6 +4,7 @@ import React, { ReactNode } from 'react';
 import { Layout, Menu, Typography } from 'antd';
 import Link from 'next/link';
 import './globals.css';
+import '@ant-design/v5-patch-for-react-19';
 
 const { Header, Content, Footer } = Layout;
 const { Title } = Typography;

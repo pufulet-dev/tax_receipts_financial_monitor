@@ -1,19 +1,30 @@
-import React from 'react';
-import { Form, Input, DatePicker, Button } from 'antd';
+"use client";
+
+import React, { useState, useEffect } from 'react';
+import { Form, Input, DatePicker, Button, Spin } from 'antd';
 import { 
   NumberOutlined, 
   DollarOutlined, 
   ContainerOutlined, 
-  CalendarOutlined 
 } from '@ant-design/icons';
 import styles from "./ReceiptForm.module.css";
 
 
 const ReceiptForm: React.FC = () => {
   const [form] = Form.useForm();
+  const [isClient, setIsClient] = useState(false);
 
   const onFinish = (values: any) => {
     console.log('Form values:', values);
+  };
+
+  useEffect(() => {
+    setIsClient(true); // on mounting
+  }, []);
+
+  if (!isClient) {
+    // return <Spin tip="Loading..."/>; 
+    return null;
   };
 
   return (

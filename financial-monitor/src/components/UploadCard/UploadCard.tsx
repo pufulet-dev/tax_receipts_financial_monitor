@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReceiptForm from '../ReceiptForm/ReceiptForm';
 import { Row, Col, Input, Typography, Button, Card, Space, Spin } from 'antd';
 import { LinkOutlined, UploadOutlined, FormOutlined, InboxOutlined } from '@ant-design/icons';
@@ -15,6 +15,7 @@ const UploadCard: React.FC = () => {
     const [activeButton, setActiveButton] = useState(0);
     const [scrapeUrl, setScrapeUrl] = useState("");
     const [loading, setLoading] = useState(false);
+    const [isClient, setIsClient] = useState(false);
 
     const props = {
         name: 'file',
@@ -71,7 +72,8 @@ const UploadCard: React.FC = () => {
       
             if (response.ok) {
               const data = await response.json();
-              console.log("scrapped data: ", data)
+              const filteredData = data.filter((item: any) => item && item.trim() !== '');
+              console.log("scrapped data: ", filteredData);
             } else {
               console.log("ERROR! fAILE to scrape")
             }
@@ -80,6 +82,15 @@ const UploadCard: React.FC = () => {
             console.log('Error during scraping: ' + err.message); 
             setLoading(false);
           } 
+    };
+
+    useEffect(() => {
+        setIsClient(true); // on mounting
+      }, []);
+    
+      if (!isClient) {
+        // return <Spin tip="Loading..."/>; 
+        return null;
     };
 
     return (
@@ -121,7 +132,7 @@ const UploadCard: React.FC = () => {
                                     onChange={(event) => {setScrapeUrl(event?.target?.value || "")}} />
                             </Col>
                             <Col span={6}>
-                                <Button type="primary">Process</Button>
+                                <Button type="primary" onClick={handleWebScrapping}>Process</Button>
                             </Col>
                         </Row>
                         {loading === true && <Spin />}
@@ -154,8 +165,6 @@ const UploadCard: React.FC = () => {
                         Please select a method to upload the tax receipt.
                     </Text>
                 }
-
-                <Button onClick={handleWebScrapping}> Trigger Web Scrapping </Button>
             </Card>
         </Space>
     )
