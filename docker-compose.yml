@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  nextjs:
+    build:
+      context: ./financial-monitor  
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+    depends_on:
+      - strapi
+
+  strapi:
+    build:
+      context: ./my-strapi-app
+    ports:
+      - "1337:1337"
+    volumes:
+      - ./backend:/srv/app
