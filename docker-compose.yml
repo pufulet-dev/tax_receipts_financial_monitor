@@ -6,8 +6,8 @@ services:
       context: ./financial-monitor  
     ports:
       - "3000:3000"
-    volumes:
-      - ./frontend:/app
+    environment:
+      - NODE_ENV=development
     depends_on:
       - strapi
 
@@ -18,3 +18,5 @@ services:
       - "1337:1337"
     volumes:
       - ./backend:/srv/app
+    environment:
+      - APP_KEYS=myKeyA,myKeyB
