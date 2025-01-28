@@ -2,6 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import ReceiptForm from '../ReceiptForm/ReceiptForm';
+import { processReceipt } from '@/utils/processReceipt';
+import ProductService from '@/services/product.service';
+import ReceiptService from '@/services/receipt.service';
 import { Row, Col, Input, Typography, Button, Card, Space, Spin } from 'antd';
 import { LinkOutlined, UploadOutlined, FormOutlined, InboxOutlined } from '@ant-design/icons';
 import { message, Upload } from 'antd';
@@ -71,9 +74,38 @@ const UploadCard: React.FC = () => {
             });
       
             if (response.ok) {
-              const data = await response.json();
-              const filteredData = data.filter((item: any) => item && item.trim() !== '');
-              console.log("scrapped data: ", filteredData);
+                const data = await response.json();
+                const filteredData = data.filter((item: any) => item && item.trim() !== '');
+                console.log("scrapped data:: ", filteredData);
+                const processedData = processReceipt(filteredData);
+                console.log("processed Data:  ", processedData);
+                console.log(process.env.NEXT_PUBLIC_STRAPI_URL, process.env.NEXT_PUBLIC_STRAPI_TOKEN);
+
+                // add new receipt
+                const receiptService = new ReceiptService();
+                const receiptResponse = await receiptService.add ({
+                    data: {
+                        total: processedData.totalPrice,
+                        date: processedData.dateTime,
+                        link: scrapeUrl,
+                    }
+                })
+                console.log("!!! receipt response: ", receiptResponse);
+                const receiptId = receiptResponse.data.id;
+                console.log("my receipt id:   ", receiptId);
+                
+                // add the products & link them to receipt
+                for (let i = 0; i < processedData.products.length; i++) {
+                    const productService = new ProductService();
+                    await productService.add ({
+                        data: {
+                            name: processedData.products[i],
+                            quantity: processedData.quantities[i],
+                            price: processedData.prices[i],
+                            receipt: receiptId,
+                        }
+                    });
+                }
             } else {
               console.log("ERROR! fAILE to scrape")
             }
@@ -89,9 +121,10 @@ const UploadCard: React.FC = () => {
       }, []);
     
       if (!isClient) {
-        // return <Spin tip="Loading..."/>; 
         return null;
     };
+
+   
 
     return (
         <Space direction="vertical" className={styles.cardWrapper}>
