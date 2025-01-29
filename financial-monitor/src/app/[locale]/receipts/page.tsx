@@ -5,7 +5,9 @@ import ReceiptService from '@/services/receipt.service';
 
 const fetchReceipts = async () => {
     const receiptService = new ReceiptService();
-    const response = await receiptService.get();
+    const response = await receiptService.get({
+        populate: "products", 
+    });
     const formattedReceipts = response.data.map((item: any) => {
         const formattedProducts = item.products.slice(0,4).map((product: any) => ({
             id: product.id, 
