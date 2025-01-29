@@ -1,38 +1,56 @@
 "use server";
+
 import ReceiptsList from '@/components/ReceiptsList/ReceiptsList';
 import ReceiptService from '@/services/receipt.service';
 
+const CONST_PAGE_SIZE = 3;
 
-const fetchReceipts = async () => {
+const fetchReceipts = async (page: number = 1, pageSize: number = 10, filters: any = {}) => {
     const receiptService = new ReceiptService();
-    const response = await receiptService.get({
-        populate: "products", 
-    });
+
+    const params = {
+        pagination: {
+            pageSize,
+            page,
+        },
+        filters: {
+            ...filters,
+        },
+        populate: "products",
+    };
+
+    const response = await receiptService.get(params);
+
     const formattedReceipts = response.data.map((item: any) => {
-        const formattedProducts = item.products.slice(0,4).map((product: any) => ({
-            id: product.id, 
-            name: product.name, 
+        const formattedProducts = (item.products || []).slice(0, 4).map((product: any) => ({
+            id: product.id,
+            name: product.name,
             price: product.price,
             quantity: product.quantity,
         }));
         return {
-            id: item.id, 
+            id: item.id,
             date: item.date,
-            total: item.total, 
+            total: item.total,
             products: formattedProducts,
-        }
-    })
+        };
+    });
+
     return formattedReceipts;
-}
+};
 
+const ReceiptsPage = async ({ searchParams }: { searchParams: { page?: string, filter?: string } }) => {
+    const page = searchParams.page ? parseInt(searchParams.page) : 1;
+    const filter = searchParams.filter || '';
 
-const ReceiptsPage = async () => {
+    // assuming filters might be passed as query params, e.g., 'date=2025-01-01'
+    const filters = filter ? { filter } : {};
 
-    const receipts = await fetchReceipts();
+    const receipts = await fetchReceipts(page, CONST_PAGE_SIZE, filters); // default page size is 3
 
     return (
         <>
-            <ReceiptsList receipts={receipts} />
+            <ReceiptsList receipts={receipts} currentPage={page} />
         </>
     );
 }

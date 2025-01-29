@@ -1,18 +1,15 @@
 "use client";
 
-import React from "react";
-import { Space, Card, Row, Col, Typography, Input, DatePicker, Slider } from "antd";
+import React, { useState, useEffect } from "react";
+import { Space, Card, Row, Col, Typography, Input, DatePicker, Slider, Button, Empty } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import ReceiptCard from "../ReceiptCard/ReceiptCard";
+import { useRouter } from "next/navigation";
 import styles from "./ReceiptsList.module.css";
 
 const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;
 
-
-interface ReceiptsListProps {
-    receipts: any;
-}
 
 interface productsProps {
     id: number;
@@ -28,10 +25,28 @@ interface ReceiptCardProps {
     products: Array<productsProps>,
 }
 
+interface ReceiptsListProps {
+    receipts: any;
+    currentPage: number;
+}
 
-const ReceiptsList: React.FC<ReceiptsListProps> = ({ receipts }) => {
+
+const ReceiptsList: React.FC<ReceiptsListProps> = ({ receipts, currentPage }) => {
 
     console.log("received receipts in client:  ", receipts);
+
+    const [page, setPage] = useState(currentPage);
+    const router = useRouter();
+
+    useEffect(() => {
+        router.push(`/en/receipts?page=${page}`, undefined);
+    }, [page, router]);
+
+    const handlePageChange = (newPage: number) => {
+        if (newPage > 0) {
+            setPage(newPage); 
+        }
+    };
 
     return (
         <Space direction="vertical" className={styles.receiptsWrapper}>
@@ -54,18 +69,42 @@ const ReceiptsList: React.FC<ReceiptsListProps> = ({ receipts }) => {
                     </Col>
 
                     {/* RECEIPT CARDS */}
-                    <Col span={18} style={{ display: "flex", flexDirection: "row", minHeight: 300, }}>
-                        { receipts.map((item: ReceiptCardProps) => ( 
-                            <ReceiptCard 
-                                key={item.id}
-                                id={item.id}
-                                date={item.date}
-                                total={item.total}
-                                products={item.products}
-                            />
-                        )) }
+                    <Col span={18} style={{ display: "flex", flexDirection: "column", }}>
+                        <Row>
+                            { receipts.length 
+                            ? receipts.map((item: ReceiptCardProps) => ( 
+                                <ReceiptCard 
+                                    key={item.id}
+                                    id={item.id}
+                                    date={item.date}
+                                    total={item.total}
+                                    products={item.products}
+                                />
+                            ))
+                            : <Empty style={{ height: "100%", width: "100%", margin: "100px auto", }} /> }
+                        </Row>
+
+                        {/* PAGINATION SECTION */}
+                        <Row justify="center" className={styles.paginationWrapper}>
+                            <Button 
+                                color="default" variant="link"
+                                onClick={() => handlePageChange(page - 1)} 
+                                disabled={page === 1}
+                            >
+                                Prev
+                            </Button>
+                            <Text className={styles.pageNumber}> {page} </Text>
+                            <Button 
+                                color="default" variant="link"
+                                onClick={() => handlePageChange(page + 1)} 
+                            >
+                                Next
+                            </Button>
+                        </Row>
                     </Col>
                 </Row>
+
+                
             </Card>
         </Space>
     );

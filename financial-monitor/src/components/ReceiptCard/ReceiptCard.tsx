@@ -27,7 +27,7 @@ const ReceiptCard: React.FC<ReceiptCardProps> = ({ id, date, total, products }) 
 
 
     return (
-        <Card key={id} className={styles.receiptCardWrapper} style={{ display: "flex", flexDirection: "column", height: "100%", minHeight: 300, }}>
+        <Card key={id} className={styles.receiptCardWrapper} style={{ display: "flex", flexDirection: "column", minHeight: 300, }}>
             <Row className={styles.receiptInfoLine}>
                 <Col>
                     <Text type="secondary"> <DollarOutlined/> Receipt </Text>
@@ -39,21 +39,19 @@ const ReceiptCard: React.FC<ReceiptCardProps> = ({ id, date, total, products }) 
             <Row style={{ margin: "10px 0", }}>
                 <Text type="secondary"> Order ID: {id} </Text>
             </Row>
-            <div style={{ flexGrow: 1, }}>
-                {products.map((product: any) => (
-                    <Row key={product.id} className={styles.receiptInfoLine}>
-                        <Col>
-                            <Text> 
-                                {product.name} 
-                                <Text type="secondary"> x {product.quantity} </Text>
-                            </Text>
-                        </Col>
-                        <Col>
-                            <Text> MDL {product.price.toFixed(2)} </Text>
-                        </Col>
-                    </Row>
-                ))}
-            </div>
+            {products.map((product: any) => (
+                <Row key={product.id} className={styles.receiptInfoLine}>
+                    <Col>
+                        <Text> 
+                            {product.name} 
+                            <Text type="secondary"> x {product.quantity} </Text>
+                        </Text>
+                    </Col>
+                    <Col>
+                        <Text> MDL {product.price.toFixed(2)} </Text>
+                    </Col>
+                </Row>
+            ))}
             <Divider />
             <Row className={styles.receiptInfoLine} >
                 <Col>
