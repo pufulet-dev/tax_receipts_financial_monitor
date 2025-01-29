@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  nextjs:
+    build:
+      context: ./financial-monitor  
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - strapi
+
+  strapi:
+    build:
+      context: ./my-strapi-app
+    ports:
+      - "1337:1337"
+    volumes:
+      - ./backend:/srv/app
+    environment:
+      - APP_KEYS=myKeyA,myKeyB

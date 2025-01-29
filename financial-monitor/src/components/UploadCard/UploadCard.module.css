@@ -1,0 +1,13 @@
+.card {
+    margin: auto;
+    margin-top: 100px;
+    width: 710px;
+    padding: 15px 30px;
+}
+
+.cardWrapper {
+    margin-right: 210px;
+    margin-left: 210px;
+    display: flex;
+    justify-content: center;
+}
