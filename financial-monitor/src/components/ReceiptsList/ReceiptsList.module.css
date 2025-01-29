@@ -1,0 +1,13 @@
+.receiptsWrapper {
+    margin-right: 60px;
+    margin-left: 60px;
+    display: flex;
+    justify-content: center;
+    margin-bottom: auto;
+}
+
+.filtersCard {
+    padding: 0 15px;
+    box-shadow: 5px 8px 24px 5px rgba(240, 240, 240, 0.6);
+    margin-right: 20px;
+}
