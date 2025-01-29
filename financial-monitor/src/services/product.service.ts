@@ -1,11 +1,12 @@
+import qs from 'qs';
+
 class ProductService {
 
-    async add (productData: any) {
+    async add(productData: any) {
         const URL = `${process.env.NEXT_PUBLIC_STRAPI_URL}api/products`;
         const TOKEN = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
 
         try {
-
             const response = await fetch(URL, {
                 method: 'POST',
                 headers: {
@@ -24,6 +25,34 @@ class ProductService {
         } catch (error: any) {
             console.error('Error adding product:', error.message);
             throw new Error(`Error adding product: ${error.message}`);
+        }
+    }
+
+    async get(params: any = {}) {
+        const baseURL = `${process.env.NEXT_PUBLIC_STRAPI_URL}api/products`;
+        const TOKEN = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
+
+        // using qs for interactive query builder
+        const queryString = qs.stringify(params, { encode: false });
+        const URL = `${baseURL}?${queryString}`;
+
+        try {
+            const response = await fetch(URL, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${TOKEN}`,
+                },
+            });
+
+            if (!response.ok) {
+                const errorDetails = await response.json();
+                throw new Error(`Failed to get products: ${errorDetails.message || response.statusText}`);
+            }
+            return await response.json();
+        } catch (error: any) {
+            console.error('Error getting products:', error.message);
+            throw new Error(`Error getting products: ${error.message}`);
         }
     }
 }
